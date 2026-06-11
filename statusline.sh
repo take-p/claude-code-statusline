@@ -92,7 +92,8 @@ pct_color() {
 cost_color() {
   local val=$1
   if [ "$val" = "?" ]; then echo -n "\$?"; return; fi
-  if awk "BEGIN {exit !($val+0 >= 100)}"; then echo -n "${MAGENTA}\$${val}${RESET}"
+  if awk "BEGIN {exit !($val+0 >= 200)}"; then echo -n "${MAGENTA}\$${val}${RESET}"
+  elif awk "BEGIN {exit !($val+0 >= 100)}"; then echo -n "${RED}\$${val}${RESET}"
   elif awk "BEGIN {exit !($val+0 >= 10)}"; then echo -n "${ORANGE}\$${val}${RESET}"
   elif awk "BEGIN {exit !($val+0 >= 1)}"; then echo -n "${YELLOW}\$${val}${RESET}"
   else echo -n "${GREEN}\$${val}${RESET}"
