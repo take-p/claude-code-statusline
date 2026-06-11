@@ -46,12 +46,10 @@ Claude Code の画面下部に、セッション名・モデル・使用率・�
 1. このリポジトリをクローンして Claude Code で開く
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-code-statusline.git
+git clone https://github.com/take-p/claude-code-statusline.git
 cd claude-code-statusline
 claude .
 ```
-
-> `YOUR_USERNAME` は実際の GitHub ユーザー名に置き換えてください。
 
 2. Claude Code に以下のように依頼する
 
