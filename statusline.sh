@@ -7,8 +7,8 @@ input=$(cat)
 # ANSI カラーコード
 GREEN=$'\033[32m'
 YELLOW=$'\033[33m'
-RED=$'\033[31m'
-MAGENTA=$'\033[35m'
+RED=$'\033[91m'
+MAGENTA=$'\033[1;95m'
 ORANGE=$'\033[38;5;208m'
 RESET=$'\033[0m'
 
@@ -31,14 +31,23 @@ USD_JPY=$(cat "$RATE_CACHE" 2>/dev/null)
 
 SESSION_ID=$(echo "$input" | jq -r '.session_id // .session_name // "unknown"')
 
-# 累計コスト記録（日次・週次・月次）
+# 累計コスト記録（日次・月次）
 COST_DIR="${HOME}/.claude/session_costs"
-mkdir -p "$COST_DIR/daily" "$COST_DIR/monthly"
+mkdir -p "$COST_DIR/daily" "$COST_DIR/daily_start" "$COST_DIR/monthly" "$COST_DIR/monthly_start"
 TODAY=$(date +%Y-%m-%d)
 THIS_MONTH=$(date +%Y-%m)
 if [ "$COST" != "?" ] && [ -n "$SESSION_ID" ]; then
-  echo "$COST" > "$COST_DIR/daily/${TODAY}_${SESSION_ID}"
-  echo "$COST" > "$COST_DIR/monthly/${THIS_MONTH}_${SESSION_ID}"
+  DAILY_START_FILE="$COST_DIR/daily_start/${TODAY}_${SESSION_ID}"
+  [ ! -f "$DAILY_START_FILE" ] && echo "$COST" > "$DAILY_START_FILE"
+  DAILY_BASE=$(cat "$DAILY_START_FILE" 2>/dev/null || echo "0")
+  SESSION_TODAY=$(awk -v c="$COST" -v s="$DAILY_BASE" 'BEGIN {d=c-s; printf "%.4f", (d<0?0:d)}')
+  echo "$SESSION_TODAY" > "$COST_DIR/daily/${TODAY}_${SESSION_ID}"
+
+  MONTHLY_START_FILE="$COST_DIR/monthly_start/${THIS_MONTH}_${SESSION_ID}"
+  [ ! -f "$MONTHLY_START_FILE" ] && echo "$COST" > "$MONTHLY_START_FILE"
+  MONTHLY_BASE=$(cat "$MONTHLY_START_FILE" 2>/dev/null || echo "0")
+  SESSION_THIS_MONTH=$(awk -v c="$COST" -v s="$MONTHLY_BASE" 'BEGIN {d=c-s; printf "%.4f", (d<0?0:d)}')
+  echo "$SESSION_THIS_MONTH" > "$COST_DIR/monthly/${THIS_MONTH}_${SESSION_ID}"
 fi
 SUM_AWK='{s+=$1} END {printf "%.2f", s+0}'
 DAILY_COST=$(ls $COST_DIR/daily/${TODAY}_* 2>/dev/null | xargs cat 2>/dev/null | awk "$SUM_AWK")
