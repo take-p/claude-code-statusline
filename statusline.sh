@@ -7,7 +7,7 @@ input=$(cat)
 # ANSI カラーコード
 GREEN=$'\033[32m'
 YELLOW=$'\033[33m'
-RED=$'\033[91m'
+RED=$'\033[38;5;203m'
 MAGENTA=$'\033[1;95m'
 ORANGE=$'\033[38;5;208m'
 RESET=$'\033[0m'
