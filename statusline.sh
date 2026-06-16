@@ -82,7 +82,8 @@ esac
 pct_color() {
   local val=$1
   if [ "$val" = "?" ]; then echo -n "?"; return; fi
-  if [ "$val" -ge 90 ]; then echo -n "${ORANGE}${val}%${RESET}"
+  if [ "$val" -ge 100 ]; then echo -n "${RED}${val}%${RESET}"
+  elif [ "$val" -ge 90 ]; then echo -n "${ORANGE}${val}%${RESET}"
   elif [ "$val" -ge 50 ]; then echo -n "${YELLOW}${val}%${RESET}"
   else echo -n "${GREEN}${val}%${RESET}"
   fi
